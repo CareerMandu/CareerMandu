@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>Career Mandu - कामको खोज Career Mandu संग</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://smtpjs.com/v3/smtp.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-image: url('https://i.imgur.com/Bb5TAoS.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      color: #779bcd;
+      overflow-x: hidden;
+    }
+    #container {
+      width: 100%;
+      min-height: 100vh;
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    @media (max-width: 640px) {
+      #container { max-width: 500px; margin: 0 auto; }
+    }
+    #splash {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #2dd4bf, #3b82f6);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      animation: fadeOut 4s forwards;
+    }
+    @keyframes fadeOut {
+      0% { opacity: 1; }
+      100% { opacity: 0; display: none; }
+    }
+    .pulse-dot {
+      width: 14px;
+      height: 14px;
+      background: #ffffff;
+      border-radius: 50%;
+      margin: 0 6px;
+      animation: pulse 1.5s infinite ease-in-out;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+    .pulse-dot:nth-child(2) { animation-delay: 0.3s; }
+    .pulse-dot:nth-child(3) { animation-delay: 0.6s; }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.6); opacity: 0.4; }
+    }
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(5px);
+    }
+    .modal-inner {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 20px;
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 450px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      transition: transform 0.3s ease;
+    }
+    .modal-inner:hover {
+      transform: scale(1.02);
+    }
+    .modal-inner > * {
+      position: relative;
+      z-index: 1;
+    }
+    .logo-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+    .logo-container img {
+      width: 160px;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+      transition: transform 0.4s ease;
+    }
+    .logo-container img:hover {
+      transform: rotate(5deg) scale(1.1);
+    }
+    .error-msg {
+      color: #ef4444;
+      font-size: 13px;
+      margin-bottom: 12px;
+      text-align: center;
+      background: rgba(239, 68, 68, 0.1);
+      padding: 8px;
+      border-radius: 8px;
+    }
+    #notifDropdown, #profileDropdown {
+      position: absolute;
+      right: 0;
+      top: 56px;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      width: 260px;
+      z-index: 10000;
+      display: none;
+      padding: 15px;
+      font-size: 14px;
+      color: #1f2937;
+      max-height: 320px;
+      overflow-y: auto;
+      animation: slideIn 0.3s ease-out;
+    }
+    @keyframes slideIn {
+      from { transform: translateY(-10px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    #headerIcons {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      transition: transform 0.3s ease;
+    }
+    #headerIcons:hover {
+      transform: scale(1.05);
+    }
+    #userPic {
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-size: cover;
+      background-position: center;
+      border: 2px solid #2dd4bf;
+      transition: transform 0.3s ease;
+    }
+    #userPic:hover {
+      transform: scale(1.1);
+    }
+    .tab-active { color: #2dd4bf !important; }
+    .tab-active i { color: #2dd4bf !important; }
+    .tab-icon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 12px;
+      color: #6b7280;
+      transition: color 0.3s ease, transform 0.2s ease;
+      padding: 10px;
+    }
+    .tab-icon:hover {
+      color: #2dd4bf;
+      transform: translateY(-3px);
+    }
+    .tab-icon i {
+      margin-bottom: 5px;
+      font-size: 24px;
+    }
+    .hidden { display: none !important; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      animation: fadeIn 0.5s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .table th, .table td {
+      border: 1px solid #e5e7eb;
+      padding: 12px;
+      font-size: 13px;
+    }
+    .table th {
+      background: linear-gradient(90deg, #eff6ff, #dbeafe);
+      font-weight: 600;
+    }
+    .job-card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 15px;
+      padding: 1.5rem;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      margin-bottom: 1.5rem;
+    }
+    .job-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+    .login-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .login-tabs button {
+      flex: 1;
+      padding: 0.75rem;
+      font-weight: 500;
+      font-size: 14px;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+      color: #6b7280;
+      border-radius: 8px 8px 0 0;
+    }
+    .login-tabs button.active {
+      border-bottom: 3px solid #2dd4bf;
+      color: #2dd4bf;
+      background: rgba(45, 212, 191, 0.1);
+    }
+    .login-tabs button:hover {
+      color: #2dd4bf;
+      background: rgba(45, 212, 191, 0.05);
+    }
+    .category-tile {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: white;
+      padding: 1.5rem;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transition: transform 0.4s ease, background 0.4s ease;
+      cursor: pointer;
+    }
+    .category-tile:hover {
+      transform: translateY(-3px);
+      background: linear-gradient(90deg, #f0f9ff, #e0f2fe);
+    }
+    .category-tile i {
+      font-size: 1.5rem;
+      color: #2dd4bf;
+    }
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .header-logo img {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: transform 0.4s ease;
+    }
+    .header-logo img:hover {
+      transform: rotate(-5deg) scale(1.1);
+    }
+    .home-logo img {
+      width: 300px;
+      height: auto;
+      border-radius: 15px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+      margin-bottom: 2rem;
+      transition: transform 0.4s ease;
+    }
+    .home-logo img:hover {
+      transform: scale(1.05);
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 0.85rem;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 14px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      background: rgba(255, 255, 255, 0.95);
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #2dd4bf;
+      box-shadow: 0 0 0 4px rgba(45, 212, 191, 0.15);
+    }
+    button {
+      padding: 0.85rem 1.75rem;
+      border-radius: 10px;
+      font-weight: 500;
+      font-size: 14px;
+      transition: all 0.4s ease;
+      cursor: pointer;
+    }
+    button:hover {
+      transform: translateY(-2px);
+    }
+    .btn-primary {
+      background: linear-gradient(90deg, #2dd4bf, #3b82f6);
+      color: white;
+    }
+    .btn-primary:hover {
+      background: linear-gradient(90deg, #26c6b3, #2563eb);
+    }
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #1f2937;
+    }
+    .btn-secondary:hover {
+      background: #d1d5db;
+    }
+    .profile-card {
+      background: white;
+      border-radius: 15px;
+      padding: 1.75rem;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      max-width: 380px;
+      text-align: center;
+      transition: transform 0.4s ease;
+    }
+    .profile-card:hover {
+      transform: translateY(-4px);
+    }
+    @media (min-width: 640px) {
+      #container { padding: 2.5rem; }
+      .header-logo img { width: 70px; height: 70px; }
+      .home-logo img { width: 350px; }
+      .category-tile { padding: 1.75rem; }
+      #jobList, #jobDetailsList { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+      .job-card { margin-bottom: 2rem; }
+      #headerIcons { gap: 2.5rem; }
+      .tab-icon { font-size: 14px; }
+      .tab-icon i { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+<div id="container">
+  <!-- Splash Screen -->
+  <div id="splash">
+    <div class="text-center">
+      <div class="logo-container">
+        <img src="https://i.imgur.com/SpJtV3b.png" alt="Career Mandu Logo"/>
+      </div>
+      <h1 class="text-4xl font-bold text-white drop-shadow-lg">Career Mandu</h1>
+      <p class="mt-3 text-lg text-white drop-shadow-md">सजिलो तरिकाले काम खोज्न अब Career Mandu</p>
+    </div>
+    <div class="mt-16 flex justify-center">
+      <div class="pulse-dot"></div>
+      <div class="pulse-dot"></div>
+      <div class="pulse-dot"></div>
+    </div>
+  </div>
+  <!-- Login/Signup Modal -->
+  <div class="modal hidden" id="loginSignupModal">
+    <div class="modal-inner">
+      <div class="logo-container">
+        <img src="https://i.imgur.com/hn3BLBi.png" alt="Career Mandu Logo"/>
+      </div>
+      <div class="login-tabs">
+        <button class="active" id="tabLogin" onclick="showLoginTab()">Login</button>
+        <button id="tabSignup" onclick="showSignupTab()">Sign Up</button>
+      </div>
+      <div id="loginTab">
+        <div class="error-msg hidden" id="loginError"></div>
+        <button class="w-full bg-red-500 text-white py-2 rounded mb-3 hover:bg-red-600 transition" onclick="fakeGmailLogin('login')">Sign in with Gmail</button>
+        <input autocomplete="username" class="w-full mb-3" id="loginEmail" placeholder="Email" type="email"/>
+        <input autocomplete="current-password" class="w-full mb-3" id="loginPassword" placeholder="Password" type="password"/>
+        <button class="w-full btn-primary" onclick="handleLogin()">Login</button>
+        <div class="mt-4 text-sm text-center text-gray-600">Don't have an account? <a class="text-teal-600 hover:underline" href="#" onclick="showSignupTab()">Sign Up</a></div>
+      </div>
+      <div class="hidden" id="signupTab">
+        <div class="error-msg hidden" id="signupError"></div>
+        <button class="w-full bg-red-500 text-white py-2 rounded mb-3 hover:bg-red-600 transition" onclick="fakeGmailLogin('signup')">Sign up with Gmail</button>
+        <input autocomplete="username" class="w-full mb-3" id="signupEmail" placeholder="Email" type="email"/>
+        <input autocomplete="new-password" class="w-full mb-3" id="signupPassword" placeholder="Password" type="password"/>
+        <button class="w-full btn-primary" onclick="handleSignup()">Sign Up</button>
+        <div class="mt-4 text-sm text-center text-gray-600">Already have an account? <a class="text-teal-600 hover:underline" href="#" onclick="showLoginTab()">Login</a></div>
+      </div>
+    </div>
+  </div>
+  <!-- Role Selection Modal -->
+  <div class="modal hidden" id="roleSelect">
+    <div class="modal-inner">
+      <h2 class="text-xl font-semibold mb-4 text-center">You are a:</h2>
+      <button class="w-full btn-primary mb-3" onclick="setRole('finder')">Job Finder</button>
+      <button class="w-full btn-primary" onclick="setRole('giver')">Job Publisher</button>
+    </div>
+  </div>
+  <!-- Profile Setup Modal -->
+  <div class="modal hidden" id="profileSetup">
+    <div class="modal-inner">
+      <h2 class="text-xl font-semibold mb-4 text-center">Set up your profile</h2>
+      <input class="w-full mb-3" id="profileName" placeholder="Name" type="text"/>
+      <input accept="image/*" class="w-full mb-3" id="profilePic" type="file"/>
+      <button class="w-full btn-primary" onclick="finishProfile()">Save</button>
+    </div>
+  </div>
+  <!-- Job Application Modal -->
+  <div class="modal hidden" id="applyForm">
+    <div class="modal-inner">
+      <h2 class="text-xl font-semibold mb-4 text-center">Apply for Job</h2>
+      <input class="w-full mb-3" id="appName" placeholder="Name" type="text"/>
+      <input class="w-full mb-3" id="appPhone" placeholder="Phone Number" type="text"/>
+      <input class="w-full mb-3" id="appEmail" placeholder="Email" type="email"/>
+      <input class="w-full mb-3" id="appQual" placeholder="Qualifications" type="text"/>
+      <input class="w-full mb-3" id="appAddress" placeholder="Address" type="text"/>
+      <textarea class="w-full mb-3" id="appDesc" placeholder="Why are you applying?"></textarea>
+      <button class="w-full btn-primary" onclick="submitApplication()">Submit</button>
+      <button class="w-full btn-secondary mt-3" onclick="closeApply()">Cancel</button>
+    </div>
+  </div>
+  <!-- Job Post Modal -->
+  <div class="modal hidden" id="postJobForm">
+    <div class="modal-inner">
+      <h2 class="text-xl font-semibold mb-4 text-center">Post a Job</h2>
+      <input class="w-full mb-3" id="jobTitle" placeholder="Job Title" type="text"/>
+      <select class="w-full mb-3" id="jobCategory">
+        <option>होटल / रेष्टुरेन्ट</option>
+        <option>डेलिभरी काम</option>
+        <option>सफा गर्ने काम</option>
+        <option>प्राविधिक</option>
+        <option>श्रम काम</option>
+      </select>
+      <textarea class="w-full mb-3" id="jobDesc" placeholder="Job Description"></textarea>
+      <input class="w-full mb-3" id="jobLocation" placeholder="Location" type="text"/>
+      <input class="w-full mb-3" id="jobSalary" placeholder="Salary" type="text"/>
+      <button class="w-full btn-primary" onclick="publishJob()">Publish</button>
+      <button class="w-full btn-secondary mt-3" onclick="closePostJob()">Cancel</button>
+    </div>
+  </div>
+  <!-- Gmail Verification Modal -->
+  <div class="modal hidden" id="verifyEmailModal">
+    <div class="modal-inner bg-white rounded-lg shadow-lg p-6">
+      <div class="logo-container mb-6">
+        <img src="https://i.imgur.com/hn3BLBi.png" alt="Career Mandu Logo" class="w-24 h-auto"/>
+      </div>
+      <h2 class="text-2xl font-semibold text-teal-600 text-center mb-4">Verify Your Gmail</h2>
+      <p class="text-center text-gray-600 mb-6">A verification code will be sent to your email.</p>
+      <input class="w-full mb-4 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500" id="verifyEmail" placeholder="Enter your Gmail" type="email" value="popfactvault@gmail.com" readonly/>
+      <button class="w-full bg-teal-500 text-white p-3 rounded-lg hover:bg-teal-600 transition duration-300 mb-4" id="sendCodeBtn" onclick="sendVerificationCode()">Send Verification Code</button>
+      <input class="w-full mb-4 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500" id="verifyCode" placeholder="Enter 6-digit code" type="text"/>
+      <button class="w-full bg-teal-500 text-white p-3 rounded-lg hover:bg-teal-600 transition duration-300" onclick="verifyCode()">Verify</button>
+      <button class="w-full bg-gray-200 text-gray-800 p-3 rounded-lg hover:bg-gray-300 transition duration-300 mt-4" onclick="closeVerifyEmail()">Cancel</button>
+      <div class="mt-4 flex justify-center" id="emailStatus"></div>
+    </div>
+  </div>
+  <!-- Notification Post Modal (Master) -->
+  <div class="modal hidden" id="postNotifForm">
+    <div class="modal-inner">
+      <h2 class="text-xl font-semibold mb-4 text-center">Publish Notification</h2>
+      <textarea class="w-full mb-3" id="notifMessage" placeholder="Enter notification message"></textarea>
+      <input class="w-full mb-3" id="notifDesc" placeholder="Enter description (optional)"/>
+      <button class="w-full btn-primary" onclick="publishNotification()">Publish</button>
+      <button class="w-full btn-secondary mt-3" onclick="closePostNotif()">Cancel</button>
+    </div>
+  </div>
+  <!-- Notification Dropdown -->
+  <div class="hidden" id="notifDropdown"></div>
+  <!-- Profile Dropdown -->
+  <div class="hidden" id="profileDropdown">
+    <button class="w-full text-left px-4 py-2 hover:bg-gray-100 rounded" onclick="logout()">Logout</button>
+  </div>
+  <!-- Main App -->
+  <div class="flex flex-col min-h-screen hidden" id="app">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-teal-500 to-teal-600 text-white p-4 shadow-lg flex justify-between items-center sticky top-0 z-30 w-full">
+      <div class="header-logo">
+        <img src="https://i.imgur.com/SpJtV3b.png" alt="Career Mandu Logo" onerror="this.style.display='none'"/>
+        <h1 class="text-xl font-semibold">Career Mandu</h1>
+      </div>
+      <div class="relative flex items-center space-x-4" id="headerIcons">
+        <button aria-label="Notifications" class="relative focus:outline-none" id="notifBtn" onclick="showNotifications()" title="Notifications">
+          <i class="fas fa-bell h-6 w-6"></i>
+        </button>
+        <div class="w-8 h-8 rounded-full bg-teal-400 flex items-center justify-center text-white font-bold cursor-pointer" id="userPic" onclick="showProfileDropdown()" title="User Profile">U</div>
+      </div>
+    </header>
+    <!-- Tabs -->
+    <nav class="flex justify-around bg-white shadow-lg px-4 py-2 fixed bottom-0 left-0 right-0 z-40 w-full select-none">
+      <button class="tab tab-icon" id="tab-home" onclick="showTab('home')" title="गृहपृष्ठ">
+        <i class="fas fa-home"></i> गृहपृष्ठ
+      </button>
+      <button class="tab tab-icon" id="tab-jobs" onclick="showTab('jobs')" title="कामहरू">
+        <i class="fas fa-briefcase"></i> कामहरू
+      </button>
+      <button class="tab tab-icon" id="tab-post" onclick="showTab('post')" title="पोस्ट गर्नुहोस्">
+        <i class="fas fa-plus-circle"></i> पोस्ट गर्नुहोस्
+      </button>
+      <button class="tab tab-icon" id="tab-msg" onclick="showTab('msg')" title="सन्देश+">
+        <i class="fas fa-envelope"></i> सन्देश+
+      </button>
+      <button class="tab tab-icon" id="tab-profile" onclick="showTab('profile')" title="प्रोफाइल+">
+        <i class="fas fa-user"></i> प्रोफाइल+
+      </button>
+      <button class="tab tab-icon hidden" id="tab-loginpw" onclick="showTab('loginpw')" title="Login PW">
+        <i class="fas fa-check"></i> Login PW
+      </button>
+      <button class="tab tab-icon hidden" id="tab-appliers" onclick="showTab('appliers')" title="Applier Details">
+        <i class="fas fa-users"></i> Applier Details
+      </button>
+      <button class="tab tab-icon hidden" id="tab-applied" onclick="showTab('applied')" title="Applied Details">
+        <i class="fas fa-file-alt"></i> Applied Details
+      </button>
+      <button class="tab tab-icon hidden" id="tab-notif" onclick="showTab('notif')" title="Publish Notification">
+        <i class="fas fa-bullhorn"></i> Publish Notification
+      </button>
+    </nav>
+    <!-- Main Content -->
+    <main class="flex-1 p-6 overflow-auto w-full">
+      <!-- Home Tab -->
+      <div class="tab-content active" id="homeTab">
+        <div class="home-logo text-center">
+          <img src="" alt="Career Mandu Logo" onerror="this.style.display='none'"/>
+        </div>
+        <h2 class="text-2xl font-semibold mb-4 text-center">गृहपृष्ठ🏠</h2>
+        <div class="mb-6 relative">
+          <input class="w-full pl-12 pr-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white" id="searchInput" oninput="doSearch()" placeholder="Search jobs by title, location, category" type="text"/>
+          <i class="fas fa-search h-5 w-5 text-gray-400 absolute left-4 top-1/2 transform -translate-y-1/2"></i>
+        </div>
+        <h3 class="text-lg font-semibold mb-4">Job Categories</h3>
+        <div class="grid grid-cols-2 gap-4 mb-6" id="categoryGrid">
+          <div class="category-tile" onclick="filterByCategory('होटल / रेष्टुरेन्ट')"><i class="fas fa-utensils"></i> होटल / रेष्टुरेन्ट</div>
+          <div class="category-tile" onclick="filterByCategory('डेलिभरी काम')"><i class="fas fa-truck"></i> डेलिभरी काम</div>
+          <div class="category-tile" onclick="filterByCategory('सफा गर्ने काम')"><i class="fas fa-broom"></i> सफा गर्ने काम</div>
+          <div class="category-tile" onclick="filterByCategory('प्राविधिक')"><i class="fas fa-tools"></i> प्राविधिक</div>
+          <div class="category-tile" onclick="filterByCategory('श्रम काम')"><i class="fas fa-hammer"></i> श्रम काम</div>
+          <div class="category-tile bg-gray-100 text-teal-600 font-semibold" onclick="clearCategoryFilter()"><i class="fas fa-times"></i> Clear Filter</div>
+        </div>
+        <h3 class="text-lg font-semibold mb-4">लोकप्रिय कामहरू</h3>
+        <div id="jobList"></div>
+      </div>
+      <!-- Jobs Tab -->
+      <div class="tab-content hidden" id="jobsTab">
+        <h2 class="text-2xl font-semibold mb-4 text-center">Available Jobs</h2>
+        <div id="jobDetailsList"></div>
+      </div>
+      <!-- Post Tab -->
+      <div class="tab-content hidden" id="postTab">
+        <h2 class="text-2xl font-semibold mb-4 text-center">Job Publisher Panel</h2>
+        <button class="btn-primary mb-6 mx-auto block" onclick="openPostJob()">Post a New Job</button>
+        <div id="publisherJobsList"></div>
+      </div>
+      <!-- Message Tab -->
+      <div class="tab-content hidden" id="msgTab">
+        <h2 class="text-2xl font-semibold mb-4 text-center">सन्देश+</h2>
+        <div id="notificationsList"></div>
+      </div>
+      <!-- Profile Tab -->
+      <div class="tab-content hidden" id="profileTab">
+        <h2 class="text-2xl font-semibold mb-4 text-center">प्रोफाइल+</h2>
+        <div class="profile-card">
+          <div class="w-24 h-24 rounded-full bg-teal-400 mb-4 flex items-center justify-center text-white text-3xl font-bold mx-auto" id="profilePicDisplay">
+            U
+          </div>
+          <input accept="image/*" class="mb-3" id="changeProfilePic" type="file"/>
+          <button class="btn-primary mb-4 w-full" onclick="updateProfilePic()">Change Profile Picture</button>
+          <h3 class="text-lg font-semibold mb-2" id="profileName"></h3>
+          <input class="w-full mb-3 text-center" id="changeProfileName" placeholder="Enter new name" type="text"/>
+          <button class="btn-primary mb-4 w-full" onclick="updateProfileName()">Change Name</button>
+          <p class="text-gray-600 mb-2" id="profileEmail">No email set</p>
+          <p class="text-gray-600 mb-4" id="profileRole">No role set</p>
+          <button class="btn-primary w-full mb-3" onclick="openVerifyEmail()">Verify Gmail Now</button>
+          <button class="btn-primary w-full mb-3" id="switchToFinderBtn" style="display: none;" onclick="switchToFinder()">Switch to Job Finder</button>
+          <button class="btn-primary w-full mb-3" id="switchToPublisherBtn" style="display: none;" onclick="switchToPublisher()">Switch to Job Publisher</button>
+          <button class="btn-secondary w-full" onclick="logout()">Logout</button>
+        </div>
+      </div>
+      <!-- Master Tabs -->
+      <div class="tab-content hidden" id="loginpwTab">
+        <h2 class="text-2xl font-semibold mb-4 text-center">All Registered Users (Master)</h2>
+        <div id="userTable"></div>
+      </div>
+      <div class="tab-content hidden" id="appliersTab">
+        <h2 class="text-2xl font-semibold mb-4 text-center">All Job Applications (Master)</h2>
+        <div id="applierTable"></div>
+      </div>
+      <!-- Applied Details Tab (Job Publisher) -->
+      <div class="tab-content hidden" id="appliedTab">
+        <h2 class="text-2xl font-semibold mb-4 text-center">Applied Details</h2>
+        <div id="appliedDetailsList"></div>
+      </div>
+      <!-- Notification Tab (Master) -->
+      <div class="tab-content hidden" id="notifTab">
+        <h2 class="text-2xl font-semibold mb-4 text-center">Publish Notification</h2>
+        <button class="btn-primary mb-6 mx-auto block" onclick="openPostNotif()">Post a New Notification</button>
+        <div id="postedNotifications"></div>
+      </div>
+    </main>
+  </div>
+</div>
+<script>
+  // Master credentials
+  const MASTER_EMAIL = "urxjourney@gmail.com";
+  const MASTER_PASSWORD = "<MNp8Tor:914";
+
+  // LocalStorage keys
+  const USERS_KEY = "cm_users";
+  const JOBS_KEY = "cm_jobs";
+  const APPS_KEY = "cm_apps";
+  const NOTIFS_KEY = "cm_notifs";
+  const LOGIN_KEY = "cm_current_user";
+
+  // Load data or initialize
+  let users = JSON.parse(localStorage.getItem(USERS_KEY) || "[]");
+  let jobs = JSON.parse(localStorage.getItem(JOBS_KEY) || "[]");
+  let applications = JSON.parse(localStorage.getItem(APPS_KEY) || "[]");
+  let notifications = JSON.parse(localStorage.getItem(NOTIFS_KEY) || "[]");
+
+  // Current user info
+  let currentUser = null;
+  let currentJobIdx = null;
+  let searchTerm = "";
+  let filterCategory = null;
+  let verificationCode = null;
+
+  // UI Elements
+  const loginSignupModal = document.getElementById("loginSignupModal");
+  const appDiv = document.getElementById("app");
+  const userPic = document.getElementById("userPic");
+  const notifBtn = document.getElementById("notifBtn");
+  const notifDropdown = document.getElementById("notifDropdown");
+  const profileDropdown = document.getElementById("profileDropdown");
+  const switchToFinderBtn = document.getElementById("switchToFinderBtn");
+  const switchToPublisherBtn = document.getElementById("switchToPublisherBtn");
+  const profilePicDisplay = document.getElementById("profilePicDisplay");
+  const profileNameDisplay = document.getElementById("profileName");
+
+  const tabs = ["home", "jobs", "post", "msg", "profile", "loginpw", "appliers", "applied", "notif"];
+
+  // Check for auto-login on page load
+  window.onload = () => {
+    let savedUserEmail = localStorage.getItem(LOGIN_KEY);
+    if (savedUserEmail) {
+      let userObj = users.find(u => u.email === savedUserEmail);
+      if (userObj) {
+        currentUser = userObj;
+        if (savedUserEmail === MASTER_EMAIL) {
+          currentUser = { email: MASTER_EMAIL, pw: MASTER_PASSWORD, role: "master", name: "Master Admin", pic: null, verified: true };
+        }
+        setTimeout(() => {
+          document.getElementById("splash").style.display = "none";
+          appDiv.classList.remove("hidden");
+          setupUIForUser();
+          showTab("home");
+        }, 4000); // 4-second splash screen
+        return;
+      }
+    }
+    setTimeout(() => {
+      document.getElementById("splash").style.display = "none";
+      loginSignupModal.classList.remove("hidden");
+      showLoginTab();
+    }, 4000); // 4-second splash screen
+  };
+
+  // Show tab content
+  function showTab(tab) {
+    tabs.forEach(t => {
+      document.getElementById(t + "Tab").classList.remove("active");
+      document.getElementById(t + "Tab").classList.add("hidden");
+      document.getElementById("tab-" + t).classList.remove("tab-active");
+    });
+    document.getElementById(tab + "Tab").classList.add("active");
+    document.getElementById(tab + "Tab").classList.remove("hidden");
+    document.getElementById("tab-" + tab).classList.add("tab-active");
+    if (tab === "home") renderJobs();
+    if (tab === "jobs") renderJobDetails();
+    if (tab === "post") renderPublisherJobsList();
+    if (tab === "profile") renderProfile();
+    if (tab === "loginpw") renderUserTable();
+    if (tab === "appliers") renderApplierTable();
+    if (tab === "applied") renderAppliedDetails();
+    if (tab === "msg") renderNotifications();
+    if (tab === "notif") renderPostedNotifications();
+  }
+
+  // Login/signup tabs toggle
+  function showLoginTab() {
+    document.getElementById("loginTab").classList.remove("hidden");
+    document.getElementById("signupTab").classList.add("hidden");
+    document.getElementById("tabLogin").classList.add("active");
+    document.getElementById("tabSignup").classList.remove("active");
+    clearErrors();
+  }
+
+  function showSignupTab() {
+    document.getElementById("loginTab").classList.add("hidden");
+    document.getElementById("signupTab").classList.remove("hidden");
+    document.getElementById("tabLogin").classList.remove("active");
+    document.getElementById("tabSignup").classList.add("active");
+    clearErrors();
+  }
+
+  function clearErrors() {
+    document.getElementById("loginError").classList.add("hidden");
+    document.getElementById("signupError").classList.add("hidden");
+  }
+
+  function showError(id, msg) {
+    let el = document.getElementById(id);
+    el.textContent = msg;
+    el.classList.remove("hidden");
+  }
+
+  function isValidGmail(email) {
+    return /^[a-zA-Z0-9._%+-]+@gmail\.com$/i.test(email);
+  }
+
+  function fakeGmailLogin(mode) {
+    if (mode === "login") {
+      document.getElementById("loginEmail").value = "demo@gmail.com";
+    } else {
+      document.getElementById("signupEmail").value = "demo@gmail.com";
+    }
+  }
+
+  // Signup handler
+  function handleSignup() {
+    let email = document.getElementById("signupEmail").value.trim().toLowerCase();
+    let pw = document.getElementById("signupPassword").value;
+    if (!email || !pw) return showError("signupError", "Please enter email and password");
+    if (!isValidGmail(email)) return showError("signupError", "Email must end with @gmail.com");
+    if (email === MASTER_EMAIL) return showError("signupError", "This email is reserved for master account.");
+    if (users.find(u => u.email === email)) return showError("signupError", "Already signed up. Go to Login page.");
+    let userObj = { email, pw, role: null, name: "", pic: null, publisherJobs: [], appliedJobs: [], verified: false };
+    users.push(userObj);
+    localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    currentUser = userObj;
+    loginSignupModal.classList.add("hidden");
+    document.getElementById("roleSelect").classList.remove("hidden");
+  }
+
+  // Login handler
+  function handleLogin() {
+    let email = document.getElementById("loginEmail").value.trim().toLowerCase();
+    let pw = document.getElementById("loginPassword").value;
+    if (!email || !pw) return showError("loginError", "Please enter email and password");
+    if (!isValidGmail(email)) return showError("loginError", "Email must end with @gmail.com");
+
+    if (email === MASTER_EMAIL && pw === MASTER_PASSWORD) {
+      currentUser = { email: MASTER_EMAIL, pw: MASTER_PASSWORD, role: "master", name: "Master Admin", pic: null, verified: true };
+      localStorage.setItem(LOGIN_KEY, email);
+      loginSignupModal.classList.add("hidden");
+      appDiv.classList.remove("hidden");
+      setupUIForUser();
+      showTab("loginpw");
+      return;
+    }
+
+    let userObj = users.find(u => u.email === email);
+    if (!userObj) return showError("loginError", "Email not found. Go to Sign Up tab.");
+    if (userObj.pw !== pw) return showError("loginError", "Wrong password. Try again.");
+
+    currentUser = userObj;
+    localStorage.setItem(LOGIN_KEY, email);
+    loginSignupModal.classList.add("hidden");
+    if (!userObj.role) {
+      document.getElementById("roleSelect").classList.remove("hidden");
+    } else if (!userObj.name) {
+      document.getElementById("profileSetup").classList.remove("hidden");
+    } else {
+      appDiv.classList.remove("hidden");
+      setupUIForUser();
+      showTab("home");
+    }
+  }
+
+  function setRole(role) {
+    currentUser.role = role;
+    saveUser();
+    document.getElementById("roleSelect").classList.add("hidden");
+    document.getElementById("profileSetup").classList.remove("hidden");
+  }
+
+  function finishProfile() {
+    let name = document.getElementById("profileName").value || "User";
+    let file = document.getElementById("profilePic").files[0];
+    currentUser.name = name;
+    if (file) {
+      let reader = new FileReader();
+      reader.onload = function (e) {
+        currentUser.pic = e.target.result;
+        saveUser();
+        finishProfileAfterSave();
+      };
+      reader.readAsDataURL(file);
+    } else {
+      saveUser();
+      finishProfileAfterSave();
+    }
+  }
+
+  function finishProfileAfterSave() {
+    document.getElementById("profileSetup").classList.add("hidden");
+    appDiv.classList.remove("hidden");
+    setupUIForUser();
+    showTab("home");
+  }
+
+  function saveUser() {
+    if (currentUser.role === "master") return;
+    let idx = users.findIndex(u => u.email === currentUser.email);
+    if (idx >= 0) {
+      users[idx] = currentUser;
+    } else {
+      users.push(currentUser);
+    }
+    localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  }
+
+  function setupUIForUser() {
+    if (currentUser.pic) {
+      userPic.style.backgroundImage = `url(${currentUser.pic})`;
+      userPic.style.backgroundSize = "cover";
+      userPic.style.backgroundPosition = "center";
+      userPic.textContent = "";
+      profilePicDisplay.style.backgroundImage = `url(${currentUser.pic})`;
+      profilePicDisplay.style.backgroundSize = "cover";
+      profilePicDisplay.style.backgroundPosition = "center";
+      profilePicDisplay.textContent = "";
+    } else {
+      userPic.style.backgroundImage = "";
+      userPic.textContent = currentUser.name ? currentUser.name[0].toUpperCase() : "U";
+      profilePicDisplay.style.backgroundImage = "";
+      profilePicDisplay.textContent = currentUser.name ? currentUser.name[0].toUpperCase() : "U";
+    }
+
+    document.getElementById("tab-loginpw").classList.toggle("hidden", currentUser.role !== "master");
+    document.getElementById("tab-appliers").classList.toggle("hidden", currentUser.role !== "master");
+    document.getElementById("tab-applied").classList.toggle("hidden", currentUser.role !== "giver");
+    document.getElementById("tab-notif").classList.toggle("hidden", currentUser.email !== MASTER_EMAIL);
+
+    profileNameDisplay.textContent = currentUser.name || "Set your name";
+    document.getElementById("changeProfileName").value = currentUser.name || "";
+    document.getElementById("profileEmail").textContent = currentUser.email || "No email set";
+    document.getElementById("profileRole").textContent = currentUser.role === "giver" ? "Job Publisher" : currentUser.role === "finder" ? "Job Finder" : "Master Admin";
+
+    switchToFinderBtn.style.display = (currentUser.role === "giver" && currentUser.email !== MASTER_EMAIL) ? "block" : "none";
+    switchToPublisherBtn.style.display = (currentUser.role === "finder" && currentUser.email !== MASTER_EMAIL) ? "block" : "none";
+  }
+
+  function updateProfilePic() {
+    let file = document.getElementById("changeProfilePic").files[0];
+    if (!file) {
+      alert("Please select an image to upload.");
+      return;
+    }
+    let reader = new FileReader();
+    reader.onload = function (e) {
+      currentUser.pic = e.target.result;
+      saveUser();
+      profilePicDisplay.style.backgroundImage = `url(${currentUser.pic})`;
+      profilePicDisplay.style.backgroundSize = "cover";
+      profilePicDisplay.style.backgroundPosition = "center";
+      profilePicDisplay.textContent = "";
+      userPic.style.backgroundImage = `url(${currentUser.pic})`;
+      userPic.style.backgroundSize = "cover";
+      userPic.style.backgroundPosition = "center";
+      userPic.textContent = "";
+      alert("Profile picture updated!");
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function updateProfileName() {
+    let newName = document.getElementById("changeProfileName").value.trim();
+    if (!newName) {
+      alert("Please enter a name.");
+      return;
+    }
+    currentUser.name = newName;
+    saveUser();
+    profileNameDisplay.textContent = currentUser.name;
+    if (!currentUser.pic) {
+      userPic.textContent = currentUser.name[0].toUpperCase();
+      profilePicDisplay.textContent = currentUser.name[0].toUpperCase();
+    }
+    alert("Name updated!");
+  }
+
+  function switchToFinder() {
+    if (currentUser.role !== "giver") return;
+    currentUser.role = "finder";
+    currentUser.publisherJobs = [];
+    saveUser();
+    setupUIForUser();
+    alert("Switched to Job Finder role!");
+    showTab("home");
+  }
+
+  function switchToPublisher() {
+    if (currentUser.role !== "finder") return;
+    currentUser.role = "giver";
+    currentUser.appliedJobs = [];
+    saveUser();
+    setupUIForUser();
+    alert("Switched to Job Publisher role!");
+    showTab("home");
+  }
+
+  function logout() {
+    localStorage.removeItem(LOGIN_KEY);
+    currentUser = null;
+    appDiv.classList.add("hidden");
+    loginSignupModal.classList.remove("hidden");
+    clearErrors();
+    document.getElementById("loginEmail").value = "";
+    document.getElementById("loginPassword").value = "";
+    hideDropdowns();
+  }
+
+  function openVerifyEmail() {
+    document.getElementById("verifyEmailModal").classList.remove("hidden");
+    document.getElementById("verifyEmail").value = currentUser.email;
+    document.getElementById("verifyCode").value = "";
+    document.getElementById("emailStatus").innerHTML = "";
+  }
+
+  function closeVerifyEmail() {
+    document.getElementById("verifyEmailModal").classList.add("hidden");
+  }
+
+  function sendVerificationCode() {
+    let email = document.getElementById("verifyEmail").value.trim();
+    if (!isValidGmail(email)) {
+      alert("Please enter a valid Gmail address.");
+      return;
+    }
+    verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+    Email.send({
+      Host: "smtp.gmail.com",
+      Username: "popfactvault@gmail.com",
+      Password: "wpjl sttx xwur yrvj",
+      To: email,
+      From: "popfactvault@gmail.com",
+      FromName: "CareerMandu",
+      Subject: "Career Mandu Email Verification",
+      Body: `Your verification code is: <b>${verificationCode}</b>`
+    }).then(
+      message => {
+        if (message === "OK") {
+          document.getElementById("emailStatus").innerHTML = '<span class="text-green-500 text-sm">Email sent!</span>';
+          document.getElementById("sendCodeBtn").disabled = true;
+          setTimeout(() => {
+            document.getElementById("sendCodeBtn").disabled = false;
+            document.getElementById("emailStatus").innerHTML = "";
+          }, 5000);
+        } else {
+          document.getElementById("emailStatus").innerHTML = '<span class="text-red-500 text-sm">Failed to send. Try again.</span>';
+        }
+      }
+    ).catch(error => {
+      document.getElementById("emailStatus").innerHTML = '<span class="text-red-500 text-sm">Error: ' + error + '</span>';
+    });
+  }
+
+  function verifyCode() {
+    let code = document.getElementById("verifyCode").value.trim();
+    if (code === verificationCode) {
+      currentUser.verified = true;
+      saveUser();
+      alert("Email verified successfully!");
+      closeVerifyEmail();
+      renderProfile();
+    } else {
+      alert("Invalid code. Try again.");
+    }
+  }
+
+  function openPostNotif() {
+    if (currentUser.email !== MASTER_EMAIL) {
+      alert("Only the master account can post notifications!");
+      return;
+    }
+    document.getElementById("postNotifForm").classList.remove("hidden");
+    document.getElementById("notifMessage").value = "";
+    document.getElementById("notifDesc").value = "";
+  }
+
+  function closePostNotif() {
+    document.getElementById("postNotifForm").classList.add("hidden");
+  }
+
+  function publishNotification() {
+    if (currentUser.email !== MASTER_EMAIL) {
+      alert("Only the master account can post notifications!");
+      return;
+    }
+    let message = document.getElementById("notifMessage").value.trim();
+    let desc = document.getElementById("notifDesc").value.trim();
+    if (!message) {
+      alert("Please enter a notification message.");
+      return;
+    }
+    let notif = {
+      id: "notif" + Date.now(),
+      message,
+      desc: desc || "",
+      date: new Date().toLocaleString(),
+      publisher: currentUser.email
+    };
+    notifications.unshift(notif);
+    localStorage.setItem(NOTIFS_KEY, JSON.stringify(notifications));
+    alert("Notification published!");
+    closePostNotif();
+    renderPostedNotifications();
+    renderNotifications();
+    showNotifications(); // Update the notification dropdown
+  }
+
+  if (jobs.length === 0) {
+    jobs = [];
+    localStorage.setItem(JOBS_KEY, JSON.stringify(jobs));
+  }
+
+  if (applications.length === 0) {
+    applications = [
+      {
+        jobId: "job1",
+        jobTitle: "Restaurant Waiter",
+        publisher: "demo2@gmail.com",
+        name: "Ram",
+        phone: "9800000000",
+        email: "demo1@gmail.com",
+        qual: "SLC",
+        address: "Kathmandu",
+        desc: "I need a job.",
+        date: new Date().toLocaleString(),
+      },
+    ];
+    localStorage.setItem(APPS_KEY, JSON.stringify(applications));
+  }
+
+  function renderJobs() {
+    let filtered = jobs.filter(j => {
+      let match = true;
+      if (searchTerm) {
+        let term = searchTerm.toLowerCase();
+        match =
+          j.title.toLowerCase().includes(term) ||
+          j.location.toLowerCase().includes(term) ||
+          j.category.toLowerCase().includes(term);
+      }
+      if (filterCategory) match = match && j.category === filterCategory;
+      return match && !j.closed;
+    });
+    let list = filtered.length
+      ? filtered
+          .map(
+            (job, i) => `
+      <div class="job-card">
+        <div class="flex justify-between items-start">
+          <div>
+            <h3 class="font-semibold text-lg">${job.title}</h3>
+            <p class="text-sm text-gray-600">${job.location}</p>
+          </div>
+          <div class="text-right">
+            <p class="font-semibold text-teal-600">${job.salary}</p>
+            <p class="text-xs text-gray-500">${job.type || ""}</p>
+          </div>
+        </div>
+        <div class="flex justify-between items-center mt-4">
+          <span class="text-sm text-gray-500">${job.category}</span>
+          <button onclick="openApply(${i})" class="btn-primary text-sm flex items-center">Apply <span class="text-xs ml-1">(आवेदन गर्नुहोस्)</span></button>
+        </div>
+      </div>
+    `
+          )
+          .join("")
+      : '<div class="text-center text-gray-400 py-10">No jobs to show</div>';
+    document.getElementById("jobList").innerHTML = list;
+  }
+
+  function renderJobDetails() {
+    let filtered = jobs.filter(j => {
+      let match = true;
+      if (searchTerm) {
+        let term = searchTerm.toLowerCase();
+        match =
+          j.title.toLowerCase().includes(term) ||
+          j.location.toLowerCase().includes(term) ||
+          j.category.toLowerCase().includes(term);
+      }
+      if (filterCategory) match = match && j.category === filterCategory;
+      return match && !j.closed;
+    });
+    let list = filtered.length
+      ? filtered
+          .map(
+            (job, i) => `
+      <div class="job-card">
+        <div class="flex justify-between items-start">
+          <div>
+            <h3 class="font-semibold text-lg">${job.title}</h3>
+            <p class="text-sm text-gray-600">${job.location}</p>
+          </div>
+          <div class="text-right">
+            <p class="font-semibold text-teal-600">${job.salary}</p>
+            <p class="text-xs text-gray-500">${job.type || ""}</p>
+          </div>
+        </div>
+        <div class="mt-3 text-sm text-gray-700">${job.desc}</div>
+        <div class="flex justify-between items-center mt-4">
+          <span class="text-sm text-gray-500">${job.category}</span>
+          <button onclick="openApply(${i})" class="btn-primary text-sm flex items-center">Apply <span class="text-xs ml-1">(आवेदन गर्नुहोस्)</span></button>
+        </div>
+      </div>
+    `
+          )
+          .join("")
+      : '<div class="text-center text-gray-400 py-10">No jobs to show</div>';
+    document.getElementById("jobDetailsList").innerHTML = list;
+  }
+
+  function openApply(idx) {
+    currentJobIdx = idx;
+    let job = jobs[idx];
+    if (job.closed) {
+      alert("This job is closed and no longer accepting applications.");
+      return;
+    }
+    document.getElementById("applyForm").classList.remove("hidden");
+    if (currentUser && (currentUser.role === "finder" || currentUser.role === "master")) {
+      document.getElementById("appName").value = currentUser.name || "";
+      document.getElementById("appEmail").value = currentUser.email || "";
+    } else {
+      document.getElementById("appName").value = "";
+      document.getElementById("appEmail").value = "";
+    }
+    document.getElementById("appPhone").value = "";
+    document.getElementById("appQual").value = "";
+    document.getElementById("appAddress").value = "";
+    document.getElementById("appDesc").value = "";
+  }
+
+  function closeApply() {
+    document.getElementById("applyForm").classList.add("hidden");
+  }
+
+  function submitApplication() {
+    let name = document.getElementById("appName").value.trim();
+    let phone = document.getElementById("appPhone").value.trim();
+    let email = document.getElementById("appEmail").value.trim();
+    let qual = document.getElementById("appQual").value.trim();
+    let address = document.getElementById("appAddress").value.trim();
+    let desc = document.getElementById("appDesc").value.trim();
+    if (!name || !phone || !email || !qual || !address || !desc) {
+      alert("Fill all fields");
+      return;
+    }
+    let job = jobs[currentJobIdx];
+    if (job.closed) {
+      alert("This job is closed and no longer accepting applications.");
+      closeApply();
+      return;
+    }
+    let app = {
+      jobId: job.id,
+      jobTitle: job.title,
+      publisher: job.publisher,
+      name,
+      phone,
+      email,
+      qual,
+      address,
+      desc,
+      date: new Date().toLocaleString(),
+    };
+    applications.push(app);
+    localStorage.setItem(APPS_KEY, JSON.stringify(applications));
+    if (currentUser && currentUser.role === "finder") {
+      currentUser.appliedJobs = currentUser.appliedJobs || [];
+      if (!currentUser.appliedJobs.includes(job.id)) {
+        currentUser.appliedJobs.push(job.id);
+        saveUser();
+      }
+    }
+    alert("Application submitted! Your details will be sent to the job publisher and admin.");
+    closeApply();
+  }
+
+  function openPostJob() {
+    document.getElementById("postJobForm").classList.remove("hidden");
+    document.getElementById("jobTitle").value = "";
+    document.getElementById("jobCategory").value = "होटल / रेष्टुरेन्ट";
+    document.getElementById("jobDesc").value = "";
+    document.getElementById("jobLocation").value = "";
+    document.getElementById("jobSalary").value = "";
+  }
+
+  function closePostJob() {
+    document.getElementById("postJobForm").classList.add("hidden");
+  }
+
+  function publishJob() {
+    let title = document.getElementById("jobTitle").value.trim();
+    let category = document.getElementById("jobCategory").value;
+    let desc = document.getElementById("jobDesc").value.trim();
+    let location = document.getElementById("jobLocation").value.trim();
+    let salary = document.getElementById("jobSalary").value.trim();
+    if (!title || !category || !desc || !location || !salary) {
+      alert("Please fill all fields");
+      return;
+    }
+    let job = {
+      id: "job" + Date.now(),
+      title,
+      category,
+      desc,
+      location,
+      salary,
+      type: "Full-time",
+      publisher: currentUser.email,
+      closed: false,
+    };
+    jobs.unshift(job);
+    localStorage.setItem(JOBS_KEY, JSON.stringify(jobs));
+    currentUser.publisherJobs = currentUser.publisherJobs || [];
+    currentUser.publisherJobs.push(job.id);
+    saveUser();
+    renderJobs();
+    renderPublisherJobsList();
+    alert("Job posted!");
+    closePostJob();
+  }
+
+  function renderPublisherJobsList() {
+    if (!currentUser || (currentUser.role !== "giver" && currentUser.role !== "master")) return;
+    let pubJobs = currentUser.role === "master" ? jobs : jobs.filter(j => j.publisher === currentUser.email);
+    let html = "";
+    if (pubJobs.length === 0) {
+      html = '<div class="text-gray-400 text-center py-6">No jobs published yet.</div>';
+    } else {
+      html = pubJobs
+        .map(j => `
+          <div class="job-card flex justify-between items-center">
+            <div>
+              <div class="font-semibold text-lg">${j.title}</div>
+              <div class="text-sm text-gray-600">${j.location} | ${j.category}</div>
+              <div class="text-sm text-gray-600">Status: ${j.closed ? "<span class='text-red-600 font-semibold'>Closed</span>" : "<span class='text-green-600 font-semibold'>Open</span>"}</div>
+            </div>
+            <button onclick="toggleJobStatus('${j.id}')" class="ml-2 px-4
+            py-2 text-sm rounded-lg ${j.closed ? 'bg-green-500 hover:bg-green-600 text-white' : 'bg-red-500 hover:bg-red-600 text-white'} transition">
+              ${j.closed ? 'Reopen' : 'Close'}
+            </button>
+          </div>
+        `)
+        .join("");
+    }
+    document.getElementById("publisherJobsList").innerHTML = html;
+  }
+
+  function toggleJobStatus(jobId) {
+    let job = jobs.find(j => j.id === jobId);
+    if (!job) return;
+    job.closed = !job.closed;
+    localStorage.setItem(JOBS_KEY, JSON.stringify(jobs));
+    renderPublisherJobsList();
+    renderJobs();
+    renderJobDetails();
+    alert(`Job has been ${job.closed ? 'closed' : 'reopened'}!`);
+  }
+
+  function doSearch() {
+    searchTerm = document.getElementById("searchInput").value;
+    renderJobs();
+    renderJobDetails();
+  }
+
+  function filterByCategory(category) {
+    filterCategory = category;
+    renderJobs();
+    renderJobDetails();
+  }
+
+  function clearCategoryFilter() {
+    filterCategory = null;
+    renderJobs();
+    renderJobDetails();
+  }
+
+  function renderNotifications() {
+    let html = notifications.length
+      ? notifications.map(n => `
+          <div class="job-card">
+            <div class="font-semibold text-lg">${n.message}</div>
+            ${n.desc ? `<div class="text-sm text-gray-600 mt-2">${n.desc}</div>` : ''}
+            <div class="text-xs text-gray-500 mt-2">Posted on: ${n.date}</div>
+          </div>
+        `).join("")
+      : '<div class="text-center text-gray-400 py-10">No notifications to show</div>';
+    document.getElementById("notificationsList").innerHTML = html;
+  }
+
+  function showNotifications() {
+    notifDropdown.classList.toggle("hidden");
+    profileDropdown.classList.add("hidden");
+    let html = notifications.length
+      ? notifications.map(n => `
+          <div class="border-b py-2">
+            <div class="font-semibold">${n.message}</div>
+            ${n.desc ? `<div class="text-sm text-gray-600">${n.desc}</div>` : ''}
+            <div class="text-xs text-gray-500 mt-1">${n.date}</div>
+          </div>
+        `).join("")
+      : '<div class="text-center text-gray-400 py-4">No notifications</div>';
+    notifDropdown.innerHTML = html;
+  }
+
+  function showProfileDropdown() {
+    profileDropdown.classList.toggle("hidden");
+    notifDropdown.classList.add("hidden");
+  }
+
+  function hideDropdowns() {
+    notifDropdown.classList.add("hidden");
+    profileDropdown.classList.add("hidden");
+  }
+
+  function renderProfile() {
+    setupUIForUser();
+  }
+
+  function renderUserTable() {
+    if (currentUser.role !== "master") return;
+    let html = `
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Password</th>
+            <th>Name</th>
+            <th>Role</th>
+            <th>Verified</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${users.map(u => `
+            <tr>
+              <td>${u.email}</td>
+              <td>${u.pw}</td>
+              <td>${u.name || "Not set"}</td>
+              <td>${u.role || "Not set"}</td>
+              <td>${u.verified ? "Yes" : "No"}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    `;
+    document.getElementById("userTable").innerHTML = html;
+  }
+
+  function renderApplierTable() {
+    if (currentUser.role !== "master") return;
+    let html = `
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Job Title</th>
+            <th>Publisher</th>
+            <th>Applicant Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Qualifications</th>
+            <th>Address</th>
+            <th>Description</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${applications.map(app => `
+            <tr>
+              <td>${app.jobTitle}</td>
+              <td>${app.publisher}</td>
+              <td>${app.name}</td>
+              <td>${app.email}</td>
+              <td>${app.phone}</td>
+              <td>${app.qual}</td>
+              <td>${app.address}</td>
+              <td>${app.desc}</td>
+              <td>${app.date}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    `;
+    document.getElementById("applierTable").innerHTML = html;
+  }
+
+  function renderAppliedDetails() {
+    if (!currentUser || currentUser.role !== "giver") return;
+    let apps = applications.filter(app => app.publisher === currentUser.email);
+    let html = apps.length
+      ? apps.map(app => `
+          <div class="job-card">
+            <div class="font-semibold text-lg">${app.jobTitle}</div>
+            <div class="text-sm text-gray-600 mt-2"><b>Name:</b> ${app.name}</div>
+            <div class="text-sm text-gray-600"><b>Email:</b> ${app.email}</div>
+            <div class="text-sm text-gray-600"><b>Phone:</b> ${app.phone}</div>
+            <div class="text-sm text-gray-600"><b>Qualifications:</b> ${app.qual}</div>
+            <div class="text-sm text-gray-600"><b>Address:</b> ${app.address}</div>
+            <div class="text-sm text-gray-600"><b>Description:</b> ${app.desc}</div>
+            <div class="text-xs text-gray-500 mt-2">Applied on: ${app.date}</div>
+          </div>
+        `).join("")
+      : '<div class="text-center text-gray-400 py-10">No applications yet</div>';
+    document.getElementById("appliedDetailsList").innerHTML = html;
+  }
+
+  function renderPostedNotifications() {
+    if (currentUser.email !== MASTER_EMAIL) return;
+    let html = notifications.length
+      ? notifications.map(n => `
+          <div class="job-card">
+            <div class="font-semibold text-lg">${n.message}</div>
+            ${n.desc ? `<div class="text-sm text-gray-600 mt-2">${n.desc}</div>` : ''}
+            <div class="text-xs text-gray-500 mt-2">Posted on: ${n.date}</div>
+          </div>
+        `).join("")
+      : '<div class="text-center text-gray-400 py-10">No notifications posted yet</div>';
+    document.getElementById("postedNotifications").innerHTML = html;
+  }
+
+  // Initialize 20 sample jobs
+  if (jobs.length === 0) {
+    const sampleJobs = [
+      { title: "Restaurant Waiter", category: "होटल / रेष्टुरेन्ट", desc: "Serve customers in a busy restaurant.", location: "Kathmandu", salary: "NPR 20,000/month", type: "Full-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Delivery Driver", category: "डेलिभरी काम", desc: "Deliver food orders around the city.", location: "Pokhara", salary: "NPR 25,000/month", type: "Full-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Office Cleaner", category: "सफा गर्ने काम", desc: "Clean office spaces daily.", location: "Lalitpur", salary: "NPR 15,000/month", type: "Part-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "IT Technician", category: "प्राविधिक", desc: "Provide tech support for office systems.", location: "Kathmandu", salary: "NPR 30,000/month", type: "Full-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Construction Worker", category: "श्रम काम", desc: "Assist in building construction.", location: "Bhaktapur", salary: "NPR 22,000/month", type: "Full-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Barista", category: "होटल / रेष्टुरेन्ट", desc: "Prepare coffee and serve customers.", location: "Pokhara", salary: "NPR 18,000/month", type: "Part-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Courier", category: "डेलिभरी काम", desc: "Deliver packages within the city.", location: "Kathmandu", salary: "NPR 20,000/month", type: "Full-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "House Cleaner", category: "सफा गर्ने काम", desc: "Clean residential homes.", location: "Lalitpur", salary: "NPR 12,000/month", type: "Part-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Electrician", category: "प्राविधिक", desc: "Install and repair electrical systems.", location: "Bhaktapur", salary: "NPR 35,000/month", type: "Full-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Mason", category: "श्रम काम", desc: "Work on construction sites.", location: "Kathmandu", salary: "NPR 25,000/month", type: "Full-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Chef", category: "होटल / रेष्टुरेन्ट", desc: "Cook meals in a hotel kitchen.", location: "Pokhara", salary: "NPR 28,000/month", type: "Full-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Food Delivery Rider", category: "डेलिभरी काम", desc: "Deliver food orders on a bike.", location: "Kathmandu", salary: "NPR 22,000/month", type: "Part-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "School Cleaner", category: "सफा गर्ने काम", desc: "Maintain cleanliness in school premises.", location: "Lalitpur", salary: "NPR 14,000/month", type: "Part-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Plumber", category: "प्राविधिक", desc: "Fix plumbing issues in buildings.", location: "Kathmandu", salary: "NPR 32,000/month", type: "Full-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Carpenter", category: "श्रम काम", desc: "Build and repair wooden structures.", location: "Bhaktapur", salary: "NPR 26,000/month", type: "Full-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Hotel Receptionist", category: "होटल / रेष्टुरेन्ट", desc: "Manage front desk operations.", location: "Pokhara", salary: "NPR 20,000/month", type: "Full-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Package Delivery", category: "डेलिभरी काम", desc: "Deliver packages for an e-commerce company.", location: "Kathmandu", salary: "NPR 24,000/month", type: "Full-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Mall Cleaner", category: "सफा गर्ने काम", desc: "Clean shopping mall areas.", location: "Lalitpur", salary: "NPR 16,000/month", type: "Part-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Network Technician", category: "प्राविधिक", desc: "Maintain network infrastructure.", location: "Kathmandu", salary: "NPR 40,000/month", type: "Full-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Laborer", category: "श्रम काम", desc: "Assist in heavy lifting and construction.", location: "Bhaktapur", salary: "NPR 20,000/month", type: "Full-time", publisher: "demo2@gmail.com", closed: false },
+    ];
+
+    jobs = sampleJobs.map(job => ({
+      id: "job" + Date.now() + Math.random().toString(36).substring(2, 9),
+      ...job,
+    }));
+
+    localStorage.setItem(JOBS_KEY, JSON.stringify(jobs));
+  }
+
+  // Close modals when clicking outside
+  document.querySelectorAll(".modal").forEach(modal => {
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        modal.classList.add("hidden");
+      }
+    });
+  });
+
+</script>
+</body>
+</html>
