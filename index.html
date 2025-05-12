@@ -44,7 +44,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      animation: fadeOut 6s forwards;
+      animation: fadeOut 4s forwards;
     }
     @keyframes fadeOut {
       0% { opacity: 1; }
@@ -586,8 +586,7 @@
           <button class="btn-primary w-full mb-3" onclick="openVerifyEmail()">Verify Gmail Now</button>
           <button class="btn-primary w-full mb-3" id="switchToFinderBtn" style="display: none;" onclick="switchToFinder()">Switch to Job Finder</button>
           <button class="btn-primary w-full mb-3" id="switchToPublisherBtn" style="display: none;" onclick="switchToPublisher()">Switch to Job Publisher</button>
-          <button class="btn-secondary w-full mt-3" onclick="logout()">Logout</button>
-          <button class="btn-secondary w-full mt-3" onclick="logout()">Logout</button> <!-- Added in profile tab -->
+          <button class="btn-secondary w-full" onclick="logout()">Logout</button>
         </div>
       </div>
       <!-- Master Tabs -->
@@ -614,11 +613,9 @@
   </div>
 </div>
 <script>
-  // Master credentials (obfuscated and validated securely - use backend in production)
-  const MASTER_CREDENTIALS = { email: atob("dXJ4am91cm5leUBnbWFpbC5jb20="), password: atob("<TVOcDhUb3I6OTE0") };
-  function validateMasterLogin(email, password) {
-    return email === MASTER_CREDENTIALS.email && password === MASTER_CREDENTIALS.password;
-  }
+  // Master credentials
+  const MASTER_EMAIL = "urxjourney@gmail.com";
+  const MASTER_PASSWORD = "<MNp8Tor:914";
 
   // LocalStorage keys
   const USERS_KEY = "cm_users";
@@ -661,15 +658,15 @@
       let userObj = users.find(u => u.email === savedUserEmail);
       if (userObj) {
         currentUser = userObj;
-        if (savedUserEmail === MASTER_CREDENTIALS.email && validateMasterLogin(savedUserEmail, null)) {
-          currentUser = { email: MASTER_CREDENTIALS.email, role: "master", name: "Master Admin", pic: null, verified: true };
+        if (savedUserEmail === MASTER_EMAIL) {
+          currentUser = { email: MASTER_EMAIL, pw: MASTER_PASSWORD, role: "master", name: "Master Admin", pic: null, verified: true };
         }
         setTimeout(() => {
           document.getElementById("splash").style.display = "none";
           appDiv.classList.remove("hidden");
           setupUIForUser();
           showTab("home");
-        }, 6000); // 6-second splash screen
+        }, 4000); // 4-second splash screen
         return;
       }
     }
@@ -677,7 +674,7 @@
       document.getElementById("splash").style.display = "none";
       loginSignupModal.classList.remove("hidden");
       showLoginTab();
-    }, 6000); // 6-second splash screen
+    }, 4000); // 4-second splash screen
   };
 
   // Show tab content
@@ -747,7 +744,7 @@
     let pw = document.getElementById("signupPassword").value;
     if (!email || !pw) return showError("signupError", "Please enter email and password");
     if (!isValidGmail(email)) return showError("signupError", "Email must end with @gmail.com");
-    if (email === MASTER_CREDENTIALS.email) return showError("signupError", "This email is reserved for master account.");
+    if (email === MASTER_EMAIL) return showError("signupError", "This email is reserved for master account.");
     if (users.find(u => u.email === email)) return showError("signupError", "Already signed up. Go to Login page.");
     let userObj = { email, pw, role: null, name: "", pic: null, publisherJobs: [], appliedJobs: [], verified: false };
     users.push(userObj);
@@ -764,8 +761,8 @@
     if (!email || !pw) return showError("loginError", "Please enter email and password");
     if (!isValidGmail(email)) return showError("loginError", "Email must end with @gmail.com");
 
-    if (email === MASTER_CREDENTIALS.email && validateMasterLogin(email, pw)) {
-      currentUser = { email: MASTER_CREDENTIALS.email, role: "master", name: "Master Admin", pic: null, verified: true };
+    if (email === MASTER_EMAIL && pw === MASTER_PASSWORD) {
+      currentUser = { email: MASTER_EMAIL, pw: MASTER_PASSWORD, role: "master", name: "Master Admin", pic: null, verified: true };
       localStorage.setItem(LOGIN_KEY, email);
       loginSignupModal.classList.add("hidden");
       appDiv.classList.remove("hidden");
@@ -855,15 +852,15 @@
     document.getElementById("tab-loginpw").classList.toggle("hidden", currentUser.role !== "master");
     document.getElementById("tab-appliers").classList.toggle("hidden", currentUser.role !== "master");
     document.getElementById("tab-applied").classList.toggle("hidden", currentUser.role !== "giver");
-    document.getElementById("tab-notif").classList.toggle("hidden", currentUser.email !== MASTER_CREDENTIALS.email);
+    document.getElementById("tab-notif").classList.toggle("hidden", currentUser.email !== MASTER_EMAIL);
 
     profileNameDisplay.textContent = currentUser.name || "Set your name";
     document.getElementById("changeProfileName").value = currentUser.name || "";
     document.getElementById("profileEmail").textContent = currentUser.email || "No email set";
     document.getElementById("profileRole").textContent = currentUser.role === "giver" ? "Job Publisher" : currentUser.role === "finder" ? "Job Finder" : "Master Admin";
 
-    switchToFinderBtn.style.display = (currentUser.role === "giver" && currentUser.email !== MASTER_CREDENTIALS.email) ? "block" : "none";
-    switchToPublisherBtn.style.display = (currentUser.role === "finder" && currentUser.email !== MASTER_CREDENTIALS.email) ? "block" : "none";
+    switchToFinderBtn.style.display = (currentUser.role === "giver" && currentUser.email !== MASTER_EMAIL) ? "block" : "none";
+    switchToPublisherBtn.style.display = (currentUser.role === "finder" && currentUser.email !== MASTER_EMAIL) ? "block" : "none";
   }
 
   function updateProfilePic() {
@@ -995,7 +992,7 @@
   }
 
   function openPostNotif() {
-    if (currentUser.email !== MASTER_CREDENTIALS.email) {
+    if (currentUser.email !== MASTER_EMAIL) {
       alert("Only the master account can post notifications!");
       return;
     }
@@ -1009,7 +1006,7 @@
   }
 
   function publishNotification() {
-    if (currentUser.email !== MASTER_CREDENTIALS.email) {
+    if (currentUser.email !== MASTER_EMAIL) {
       alert("Only the master account can post notifications!");
       return;
     }
@@ -1207,10 +1204,6 @@
   }
 
   function openPostJob() {
-    if (currentUser && currentUser.role !== "giver") {
-      alert("Only Job Publishers can post jobs!");
-      return;
-    }
     document.getElementById("postJobForm").classList.remove("hidden");
     document.getElementById("jobTitle").value = "";
     document.getElementById("jobCategory").value = "होटल / रेष्टुरेन्ट";
@@ -1229,8 +1222,8 @@
     let desc = document.getElementById("jobDesc").value.trim();
     let location = document.getElementById("jobLocation").value.trim();
     let salary = document.getElementById("jobSalary").value.trim();
-    if (!title || !desc || !location || !salary) {
-      alert("All fields are required!");
+    if (!title || !category || !desc || !location || !salary) {
+      alert("Please fill all fields");
       return;
     }
     let job = {
@@ -1240,261 +1233,260 @@
       desc,
       location,
       salary,
+      type: "Full-time",
       publisher: currentUser.email,
-      date: new Date().toLocaleString(),
       closed: false,
-      type: ""
     };
     jobs.unshift(job);
     localStorage.setItem(JOBS_KEY, JSON.stringify(jobs));
-    if (currentUser.role === "giver") {
-      currentUser.publisherJobs = currentUser.publisherJobs || [];
-      currentUser.publisherJobs.push(job.id);
-      saveUser();
-    }
-    alert("Job posted successfully!");
-    closePostJob();
-    renderPublisherJobsList();
+    currentUser.publisherJobs = currentUser.publisherJobs || [];
+    currentUser.publisherJobs.push(job.id);
+    saveUser();
     renderJobs();
-    renderJobDetails();
+    renderPublisherJobsList();
+    alert("Job posted!");
+    closePostJob();
   }
 
   function renderPublisherJobsList() {
-    if (currentUser && currentUser.role !== "giver") {
-<script>
-// Continuation of renderPublisherJobsList
-function renderPublisherJobsList() {
-  if (currentUser && currentUser.role !== "giver") {
-    document.getElementById("publisherJobsList").innerHTML = '<div class="text-center text-gray-400 py-10">Only Job Publishers can view this section</div>';
-    return;
-  }
-  let publisherJobs = jobs.filter(j => j.publisher === currentUser.email);
-  let list = publisherJobs.length
-    ? publisherJobs.map((job, i) => `
-      <div class="job-card">
-        <div class="flex justify-between items-start">
-          <div>
-            <h3 class="font-semibold text-lg">${job.title}</h3>
-            <p class="text-sm text-gray-600">${job.location}</p>
-          </div>
-          <div class="text-right">
-            <p class="font-semibold text-teal-600">${job.salary}</p>
-            <p class="text-xs text-gray-500">${job.date}</p>
-          </div>
-        </div>
-        <div class="mt-3 text-sm text-gray-700">${job.desc}</div>
-        <div class="flex justify-between items-center mt-4">
-          <span class="text-sm text-gray-500">${job.category}</span>
-          <div class="flex gap-2">
-            <button onclick="toggleJobStatus('${job.id}', ${!job.closed})" class="btn-${job.closed ? 'primary' : 'secondary'} text-sm">
-              ${job.closed ? 'Reopen' : 'Close'}
+    if (!currentUser || (currentUser.role !== "giver" && currentUser.role !== "master")) return;
+    let pubJobs = currentUser.role === "master" ? jobs : jobs.filter(j => j.publisher === currentUser.email);
+    let html = "";
+    if (pubJobs.length === 0) {
+      html = '<div class="text-gray-400 text-center py-6">No jobs published yet.</div>';
+    } else {
+      html = pubJobs
+        .map(j => `
+          <div class="job-card flex justify-between items-center">
+            <div>
+              <div class="font-semibold text-lg">${j.title}</div>
+              <div class="text-sm text-gray-600">${j.location} | ${j.category}</div>
+              <div class="text-sm text-gray-600">Status: ${j.closed ? "<span class='text-red-600 font-semibold'>Closed</span>" : "<span class='text-green-600 font-semibold'>Open</span>"}</div>
+            </div>
+            <button onclick="toggleJobStatus('${j.id}')" class="ml-2 px-4
+            py-2 text-sm rounded-lg ${j.closed ? 'bg-green-500 hover:bg-green-600 text-white' : 'bg-red-500 hover:bg-red-600 text-white'} transition">
+              ${j.closed ? 'Reopen' : 'Close'}
             </button>
           </div>
-        </div>
-      </div>
-    `).join("")
-    : '<div class="text-center text-gray-400 py-10">No jobs posted yet</div>';
-  document.getElementById("publisherJobsList").innerHTML = list;
-}
+        `)
+        .join("");
+    }
+    document.getElementById("publisherJobsList").innerHTML = html;
+  }
 
-function toggleJobStatus(jobId, status) {
-  let job = jobs.find(j => j.id === jobId);
-  if (job) {
-    job.closed = status;
+  function toggleJobStatus(jobId) {
+    let job = jobs.find(j => j.id === jobId);
+    if (!job) return;
+    job.closed = !job.closed;
     localStorage.setItem(JOBS_KEY, JSON.stringify(jobs));
     renderPublisherJobsList();
     renderJobs();
     renderJobDetails();
-    alert(`Job ${status ? 'closed' : 'reopened'} successfully!`);
+    alert(`Job has been ${job.closed ? 'closed' : 'reopened'}!`);
   }
-}
 
-function renderUserTable() {
-  if (currentUser.role !== "master") {
-    document.getElementById("userTable").innerHTML = '<div class="text-center text-gray-400 py-10">Access restricted to Master Admin</div>';
-    return;
+  function doSearch() {
+    searchTerm = document.getElementById("searchInput").value;
+    renderJobs();
+    renderJobDetails();
   }
-  let userList = users.map(u => ({
-    email: u.email,
-    password: u.email === MASTER_CREDENTIALS.email ? '********' : u.pw, // Hide password for non-master users viewing
-    name: u.name || 'N/A',
-    role: u.role || 'N/A',
-    verified: u.verified ? 'Yes' : 'No'
-  }));
-  // Include master account in the table
-  userList.push({
-    email: MASTER_CREDENTIALS.email,
-    password: '********', // Hide master password
-    name: 'Master Admin',
-    role: 'master',
-    verified: 'Yes'
+
+  function filterByCategory(category) {
+    filterCategory = category;
+    renderJobs();
+    renderJobDetails();
+  }
+
+  function clearCategoryFilter() {
+    filterCategory = null;
+    renderJobs();
+    renderJobDetails();
+  }
+
+  function renderNotifications() {
+    let html = notifications.length
+      ? notifications.map(n => `
+          <div class="job-card">
+            <div class="font-semibold text-lg">${n.message}</div>
+            ${n.desc ? `<div class="text-sm text-gray-600 mt-2">${n.desc}</div>` : ''}
+            <div class="text-xs text-gray-500 mt-2">Posted on: ${n.date}</div>
+          </div>
+        `).join("")
+      : '<div class="text-center text-gray-400 py-10">No notifications to show</div>';
+    document.getElementById("notificationsList").innerHTML = html;
+  }
+
+  function showNotifications() {
+    notifDropdown.classList.toggle("hidden");
+    profileDropdown.classList.add("hidden");
+    let html = notifications.length
+      ? notifications.map(n => `
+          <div class="border-b py-2">
+            <div class="font-semibold">${n.message}</div>
+            ${n.desc ? `<div class="text-sm text-gray-600">${n.desc}</div>` : ''}
+            <div class="text-xs text-gray-500 mt-1">${n.date}</div>
+          </div>
+        `).join("")
+      : '<div class="text-center text-gray-400 py-4">No notifications</div>';
+    notifDropdown.innerHTML = html;
+  }
+
+  function showProfileDropdown() {
+    profileDropdown.classList.toggle("hidden");
+    notifDropdown.classList.add("hidden");
+  }
+
+  function hideDropdowns() {
+    notifDropdown.classList.add("hidden");
+    profileDropdown.classList.add("hidden");
+  }
+
+  function renderProfile() {
+    setupUIForUser();
+  }
+
+  function renderUserTable() {
+    if (currentUser.role !== "master") return;
+    let html = `
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Password</th>
+            <th>Name</th>
+            <th>Role</th>
+            <th>Verified</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${users.map(u => `
+            <tr>
+              <td>${u.email}</td>
+              <td>${u.pw}</td>
+              <td>${u.name || "Not set"}</td>
+              <td>${u.role || "Not set"}</td>
+              <td>${u.verified ? "Yes" : "No"}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    `;
+    document.getElementById("userTable").innerHTML = html;
+  }
+
+  function renderApplierTable() {
+    if (currentUser.role !== "master") return;
+    let html = `
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Job Title</th>
+            <th>Publisher</th>
+            <th>Applicant Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Qualifications</th>
+            <th>Address</th>
+            <th>Description</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${applications.map(app => `
+            <tr>
+              <td>${app.jobTitle}</td>
+              <td>${app.publisher}</td>
+              <td>${app.name}</td>
+              <td>${app.email}</td>
+              <td>${app.phone}</td>
+              <td>${app.qual}</td>
+              <td>${app.address}</td>
+              <td>${app.desc}</td>
+              <td>${app.date}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    `;
+    document.getElementById("applierTable").innerHTML = html;
+  }
+
+  function renderAppliedDetails() {
+    if (!currentUser || currentUser.role !== "giver") return;
+    let apps = applications.filter(app => app.publisher === currentUser.email);
+    let html = apps.length
+      ? apps.map(app => `
+          <div class="job-card">
+            <div class="font-semibold text-lg">${app.jobTitle}</div>
+            <div class="text-sm text-gray-600 mt-2"><b>Name:</b> ${app.name}</div>
+            <div class="text-sm text-gray-600"><b>Email:</b> ${app.email}</div>
+            <div class="text-sm text-gray-600"><b>Phone:</b> ${app.phone}</div>
+            <div class="text-sm text-gray-600"><b>Qualifications:</b> ${app.qual}</div>
+            <div class="text-sm text-gray-600"><b>Address:</b> ${app.address}</div>
+            <div class="text-sm text-gray-600"><b>Description:</b> ${app.desc}</div>
+            <div class="text-xs text-gray-500 mt-2">Applied on: ${app.date}</div>
+          </div>
+        `).join("")
+      : '<div class="text-center text-gray-400 py-10">No applications yet</div>';
+    document.getElementById("appliedDetailsList").innerHTML = html;
+  }
+
+  function renderPostedNotifications() {
+    if (currentUser.email !== MASTER_EMAIL) return;
+    let html = notifications.length
+      ? notifications.map(n => `
+          <div class="job-card">
+            <div class="font-semibold text-lg">${n.message}</div>
+            ${n.desc ? `<div class="text-sm text-gray-600 mt-2">${n.desc}</div>` : ''}
+            <div class="text-xs text-gray-500 mt-2">Posted on: ${n.date}</div>
+          </div>
+        `).join("")
+      : '<div class="text-center text-gray-400 py-10">No notifications posted yet</div>';
+    document.getElementById("postedNotifications").innerHTML = html;
+  }
+
+  // Initialize 20 sample jobs
+  if (jobs.length === 0) {
+    const sampleJobs = [
+      { title: "Restaurant Waiter", category: "होटल / रेष्टुरेन्ट", desc: "Serve customers in a busy restaurant.", location: "Kathmandu", salary: "NPR 20,000/month", type: "Full-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Delivery Driver", category: "डेलिभरी काम", desc: "Deliver food orders around the city.", location: "Pokhara", salary: "NPR 25,000/month", type: "Full-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Office Cleaner", category: "सफा गर्ने काम", desc: "Clean office spaces daily.", location: "Lalitpur", salary: "NPR 15,000/month", type: "Part-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "IT Technician", category: "प्राविधिक", desc: "Provide tech support for office systems.", location: "Kathmandu", salary: "NPR 30,000/month", type: "Full-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Construction Worker", category: "श्रम काम", desc: "Assist in building construction.", location: "Bhaktapur", salary: "NPR 22,000/month", type: "Full-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Barista", category: "होटल / रेष्टुरेन्ट", desc: "Prepare coffee and serve customers.", location: "Pokhara", salary: "NPR 18,000/month", type: "Part-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Courier", category: "डेलिभरी काम", desc: "Deliver packages within the city.", location: "Kathmandu", salary: "NPR 20,000/month", type: "Full-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "House Cleaner", category: "सफा गर्ने काम", desc: "Clean residential homes.", location: "Lalitpur", salary: "NPR 12,000/month", type: "Part-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Electrician", category: "प्राविधिक", desc: "Install and repair electrical systems.", location: "Bhaktapur", salary: "NPR 35,000/month", type: "Full-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Mason", category: "श्रम काम", desc: "Work on construction sites.", location: "Kathmandu", salary: "NPR 25,000/month", type: "Full-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Chef", category: "होटल / रेष्टुरेन्ट", desc: "Cook meals in a hotel kitchen.", location: "Pokhara", salary: "NPR 28,000/month", type: "Full-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Food Delivery Rider", category: "डेलिभरी काम", desc: "Deliver food orders on a bike.", location: "Kathmandu", salary: "NPR 22,000/month", type: "Part-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "School Cleaner", category: "सफा गर्ने काम", desc: "Maintain cleanliness in school premises.", location: "Lalitpur", salary: "NPR 14,000/month", type: "Part-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Plumber", category: "प्राविधिक", desc: "Fix plumbing issues in buildings.", location: "Kathmandu", salary: "NPR 32,000/month", type: "Full-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Carpenter", category: "श्रम काम", desc: "Build and repair wooden structures.", location: "Bhaktapur", salary: "NPR 26,000/month", type: "Full-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Hotel Receptionist", category: "होटल / रेष्टुरेन्ट", desc: "Manage front desk operations.", location: "Pokhara", salary: "NPR 20,000/month", type: "Full-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Package Delivery", category: "डेलिभरी काम", desc: "Deliver packages for an e-commerce company.", location: "Kathmandu", salary: "NPR 24,000/month", type: "Full-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Mall Cleaner", category: "सफा गर्ने काम", desc: "Clean shopping mall areas.", location: "Lalitpur", salary: "NPR 16,000/month", type: "Part-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Network Technician", category: "प्राविधिक", desc: "Maintain network infrastructure.", location: "Kathmandu", salary: "NPR 40,000/month", type: "Full-time", publisher: "demo2@gmail.com", closed: false },
+      { title: "Laborer", category: "श्रम काम", desc: "Assist in heavy lifting and construction.", location: "Bhaktapur", salary: "NPR 20,000/month", type: "Full-time", publisher: "demo2@gmail.com", closed: false },
+    ];
+
+    jobs = sampleJobs.map(job => ({
+      id: "job" + Date.now() + Math.random().toString(36).substring(2, 9),
+      ...job,
+    }));
+
+    localStorage.setItem(JOBS_KEY, JSON.stringify(jobs));
+  }
+
+  // Close modals when clicking outside
+  document.querySelectorAll(".modal").forEach(modal => {
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        modal.classList.add("hidden");
+      }
+    });
   });
 
-  let table = `
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Email</th>
-          <th>Password</th>
-          <th>Name</th>
-          <th>Role</th>
-          <th>Verified</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${userList.map(u => `
-          <tr>
-            <td>${u.email}</td>
-            <td>${u.password}</td>
-            <td>${u.name}</td>
-            <td>${u.role}</td>
-            <td>${u.verified}</td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>
-  `;
-  document.getElementById("userTable").innerHTML = table;
-}
-
-function renderApplierTable() {
-  if (currentUser.role !== "master") {
-    document.getElementById("applierTable").innerHTML = '<div class="text-center text-gray-400 py-10">Access restricted to Master Admin</div>';
-    return;
-  }
-  let table = `
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Job Title</th>
-          <th>Applicant Name</th>
-          <th>Email</th>
-          <th>Phone</th>
-          <th>Qualifications</th>
-          <th>Address</th>
-          <th>Description</th>
-          <th>Date</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${applications.map(app => `
-          <tr>
-            <td>${app.jobTitle}</td>
-            <td>${app.name}</td>
-            <td>${app.email}</td>
-            <td>${app.phone}</td>
-            <td>${app.qual}</td>
-            <td>${app.address}</td>
-            <td>${app.desc}</td>
-            <td>${app.date}</td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>
-  `;
-  document.getElementById("applierTable").innerHTML = table;
-}
-
-function renderAppliedDetails() {
-  if (currentUser.role !== "giver") {
-    document.getElementById("appliedDetailsList").innerHTML = '<div class="text-center text-gray-400 py-10">Only Job Publishers can view this section</div>';
-    return;
-  }
-  let applied = applications.filter(app => app.publisher === currentUser.email);
-  let list = applied.length
-    ? applied.map(app => `
-      <div class="job-card">
-        <h3 class="font-semibold text-lg">${app.jobTitle}</h3>
-        <p class="text-sm text-gray-600">Applicant: ${app.name}</p>
-        <p class="text-sm text-gray-600">Email: ${app.email}</p>
-        <p class="text-sm text-gray-600">Phone: ${app.phone}</p>
-        <p class="text-sm text-gray-600">Qualifications: ${app.qual}</p>
-        <p class="text-sm text-gray-600">Address: ${app.address}</p>
-        <p class="text-sm text-gray-600">Description: ${app.desc}</p>
-        <p class="text-sm text-gray-500 mt-2">Applied on: ${app.date}</p>
-      </div>
-    `).join("")
-    : '<div class="text-center text-gray-400 py-10">No applications yet</div>';
-  document.getElementById("appliedDetailsList").innerHTML = list;
-}
-
-function renderNotifications() {
-  let list = notifications.length
-    ? notifications.map(n => `
-      <div class="job-card">
-        <h3 class="font-semibold text-lg">${n.message}</h3>
-        ${n.desc ? `<p class="text-sm text-gray-600">${n.desc}</p>` : ''}
-        <p class="text-sm text-gray-500 mt-2">Posted on: ${n.date}</p>
-      </div>
-    `).join("")
-    : '<div class="text-center text-gray-400 py-10">No notifications yet</div>';
-  document.getElementById("notificationsList").innerHTML = list;
-}
-
-function renderPostedNotifications() {
-  if (currentUser.email !== MASTER_CREDENTIALS.email) {
-    document.getElementById("postedNotifications").innerHTML = '<div class="text-center text-gray-400 py-10">Access restricted to Master Admin</div>';
-    return;
-  }
-  let list = notifications.length
-    ? notifications.map(n => `
-      <div class="job-card">
-        <h3 class="font-semibold text-lg">${n.message}</h3>
-        ${n.desc ? `<p class="text-sm text-gray-600">${n.desc}</p>` : ''}
-        <p class="text-sm text-gray-500 mt-2">Posted on: ${n.date}</p>
-      </div>
-    `).join("")
-    : '<div class="text-center text-gray-400 py-10">No notifications posted yet</div>';
-  document.getElementById("postedNotifications").innerHTML = list;
-}
-
-function showNotifications() {
-  let list = notifications.length
-    ? notifications.map(n => `
-      <div class="border-b border-gray-200 py-2">
-        <p class="font-semibold">${n.message}</p>
-        ${n.desc ? `<p class="text-sm text-gray-600">${n.desc}</p>` : ''}
-        <p class="text-xs text-gray-400 mt-1">${n.date}</p>
-      </div>
-    `).join("")
-    : '<div class="text-center text-gray-400 py-4">No notifications</div>';
-  notifDropdown.innerHTML = list;
-  notifDropdown.style.display = notifDropdown.style.display === "block" ? "none" : "block";
-  profileDropdown.style.display = "none";
-}
-
-function showProfileDropdown() {
-  profileDropdown.style.display = profileDropdown.style.display === "block" ? "none" : "block";
-  notifDropdown.style.display = "none";
-}
-
-function hideDropdowns() {
-  notifDropdown.style.display = "none";
-  profileDropdown.style.display = "none";
-}
-
-function doSearch() {
-  searchTerm = document.getElementById("searchInput").value;
-  renderJobs();
-  renderJobDetails();
-}
-
-function filterByCategory(category) {
-  filterCategory = category;
-  renderJobs();
-  renderJobDetails();
-}
-
-function clearCategoryFilter() {
-  filterCategory = null;
-  renderJobs();
-  renderJobDetails();
-}
-
-function renderProfile() {
-  setupUIForUser();
-}
 </script>
 </body>
 </html>
-     
